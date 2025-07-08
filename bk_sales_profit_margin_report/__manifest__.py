@@ -5,7 +5,7 @@
     'description': """ Sales Margin""",
     'category': 'sales',
     'author': 'Biniyam k',
-    'website': 'mailto:biniyamkg@gmail.com',
+    'website': 'mailto:info.biniyamkg@gmail.com',
     'license': 'LGPL-3',
     'price': '20.0',
     'currency': 'USD',
