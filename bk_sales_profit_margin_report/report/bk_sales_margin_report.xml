@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="sales_profit_report_pdf">
+  <t t-call="web.html_container">
+    <t t-call="web.external_layout">
+      <t t-foreach="docs" t-as="doc">
+        <div class="page">
+          <!-- Header -->
+          <h2 class="text-center">Profitability Report</h2>
+          <p><strong>Date:</strong> <t t-esc="doc.date_start"/> to <t t-esc="doc.date_end"/></p>
+          <!-- KPIs -->
+          <t t-set="report" t-value="doc._get_report_data()"/>
+          <t t-set="report_data" t-value="report['lines']"/>
+          <t t-set="top_products" t-value="report['top_products']"/>
+          <t t-set="bottom_products" t-value="report['least_profitable_products']"/>
+          <t t-set="category_summary" t-value="report['category_summary']"/>
+          <t t-set="total_qty" t-value="sum(line['qty'] for line in report_data)"/>
+          <t t-set="total_sales" t-value="sum(line['subtotal'] for line in report_data)"/>
+          <t t-set="total_cost" t-value="sum(line['total_cost'] for line in report_data)"/>
+          <t t-set="total_margin" t-value="sum(line['margin'] for line in report_data)"/>
+          <t t-set="avg_margin_percent" t-value="(total_margin / total_sales * 100.0) if total_sales else 0.0"/>
+
+          <!-- KPIs Table -->
+          <table class="table table-sm mt-2 mb-4">
+            <tr>
+              <td><strong>Total Quantity Sold:</strong></td>
+              <td><t t-esc="'{:,.2f}'.format(total_qty)"/></td>
+              <td><strong>Total Sales (Subtotal):</strong></td>
+              <td><t t-esc="'{:,.2f}'.format(total_sales)"/></td>
+            </tr>
+            <tr>
+              <td><strong>Total Cost:</strong></td>
+              <td><t t-esc="'{:,.2f}'.format(total_cost)"/></td>
+              <td><strong>Total Margin:</strong></td>
+              <td><t t-esc="'{:,.2f}'.format(total_margin)"/></td>
+            </tr>
+            <tr>
+              <td><strong>Average Margin %:</strong></td>
+              <td><t t-esc="'{:,.2f}%'.format(avg_margin_percent)"/></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+
+          <!-- Main Report Table -->
+          <h4 class="mt-3">Detailed Product Profitability</h4>
+          <table class="table table-sm table-bordered">
+            <thead class="thead-light">
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Unit Cost</th>
+                <th>Total Cost</th>
+                <th>Subtotal</th>
+                <th>Margin</th>
+                <th>Margin (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="report_data" t-as="line">
+                <tr>
+                  <td><t t-esc="line['product']"/></td>
+                  <td><t t-esc="line['category']"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(line['qty'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(line['unit_price'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(line['unit_cost'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(line['total_cost'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(line['subtotal'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(line['margin'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(line['margin_percent'])"/>%</td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+
+          <!-- Top 5 Most Profitable -->
+          <h4 class="mt-4">Top 5 Most Profitable Products</h4>
+          <table class="table table-sm table-bordered">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Margin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="top_products" t-as="p">
+                <tr>
+                  <td><t t-esc="p['product']"/></td>
+                  <td><t t-esc="p['category']"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(p['margin'])"/></td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+
+          <!-- Top 5 Least Profitable -->
+          <h4 class="mt-4">Top 5 Least Profitable Products</h4>
+          <table class="table table-sm table-bordered">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Margin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="bottom_products" t-as="p">
+                <tr>
+                  <td><t t-esc="p['product']"/></td>
+                  <td><t t-esc="p['category']"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(p['margin'])"/></td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+
+          <!-- Category Summary -->
+          <h4 class="mt-4">Category Summary</h4>
+          <table class="table table-sm table-bordered">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Total Qty</th>
+                <th>Revenue</th>
+                <th>Cost</th>
+                <th>Margin</th>
+                <th>Margin %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="category_summary" t-as="cat">
+                <tr>
+                  <td><t t-esc="cat['category']"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(cat['qty'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(cat['revenue'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(cat['cost'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(cat['margin'])"/></td>
+                  <td class="text-right"><t t-esc="'{:,.2f}'.format(cat['margin_percent'])"/>%</td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+
+
+
+<record id="paperformat_sales_profit_landscape" model="report.paperformat">
+    <field name="name">POS Profit Report Landscape</field>
+    <field name="default" eval="False"/>
+    <field name="format">A4</field>
+    <field name="orientation">Landscape</field>
+    <field name="margin_top">20</field>
+    <field name="margin_bottom">20</field>
+    <field name="margin_left">10</field>
+    <field name="margin_right">10</field>
+    <field name="header_line" eval="False"/>
+    <field name="dpi">90</field>
+</record>
+
+<record id="action_report_sales_profit" model="ir.actions.report">
+    <field name="name">POS Profitability Report</field>
+    <field name="model">sales.profit.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">bk_sales_profit_margin_report.sales_profit_report_pdf</field>
+    <field name="report_file">bk_sales_profit_margin_report.sales_profit_report_pdf</field>
+    <field name="paperformat_id" ref="bk_sales_profit_margin_report.paperformat_sales_profit_landscape"/>
+    <field name="print_report_name">'sales_Profit_Report_%s_to_%s.pdf' % (object.date_start, object.date_end)</field>
+</record>
+
+<!--    <record id="action_report_pos_profit" model="ir.actions.report">-->
+<!--        <field name="name">POS Profitability Report</field>-->
+<!--        <field name="model">pos.profit.report.wizard</field>-->
+<!--        <field name="report_type">qweb-pdf</field>-->
+<!--        <field name="report_name">bk_profit_margin_report.pos_profit_report_pdf</field>-->
+<!--        <field name="report_file">bk_profit_margin_report.pos_profit_report_pdf</field>-->
+<!--      <field name="print_report_name">'POS_Profit_Report_%s_to_%s.pdf' % (object.date_start, object.date_end)</field>-->
+
+<!--    </record>-->
+</odoo>

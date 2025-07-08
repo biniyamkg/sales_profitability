@@ -1,0 +1,21 @@
+{
+    'name': 'Sales: Product Profitability and Margin Report',
+    'version': '0.1',
+    'summary': 'Sales margin Report',
+    'description': """ Sales Margin""",
+    'category': 'sales',
+    'author': 'Biniyam k',
+    'website': 'mailto:biniyamkg@gmail.com',
+    'license': 'LGPL-3',
+    'price': '20.0',
+    'currency': 'USD',
+    'depends': ['sale_margin','sale_management', 'sale', 'web'],
+    'data': [
+        'security/ir.model.access.csv',
+        'report/bk_sales_margin_report.xml',
+        'wizard/bk_sales_profit_report_wizard_view.xml',
+    ],
+    'demo': [],
+    'installable': True,
+    'auto_install': False,
+}

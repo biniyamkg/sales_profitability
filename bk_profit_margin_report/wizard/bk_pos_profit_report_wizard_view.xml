@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<record id="view_pos_profit_report_wizard" model="ir.ui.view">
+    <field name="name">pos.profit.report.wizard.form</field>
+    <field name="model">pos.profit.report.wizard</field>
+    <field name="arch" type="xml">
+        <form string="POS Profitability Report">
+            <group>
+                <field name="date_start" help="Start date of the report. Maximum range is 31 days."/>
+                <field name="date_end" help="End date of the report."/>
+                <field name="config_ids"/>
+            </group>
+            <footer>
+                <button name="action_export_pdf" type="object" class="btn-primary" string="Export PDF"/>
+                <button name="action_export_excel" type="object" string="Export Excel"/>
+                <button string="Cancel" class="btn-secondary" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="action_pos_profit_report_wizard" model="ir.actions.act_window">
+    <field name="name">POS Profitability Report</field>
+    <field name="res_model">pos.profit.report.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+<menuitem id="menu_pos_profit_report"
+          name="Profitability Report"
+          parent="point_of_sale.menu_point_rep"
+          action="action_pos_profit_report_wizard"/>
+
+</odoo>

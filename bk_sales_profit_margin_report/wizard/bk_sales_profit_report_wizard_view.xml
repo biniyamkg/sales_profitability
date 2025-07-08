@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Form View -->
+    <record id="view_bk_sales_profit_report_wizard" model="ir.ui.view">
+        <field name="name">sales.profit.report.wizard.form</field>
+        <field name="model">sales.profit.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Sales Profitability Report">
+                <group>
+                    <field name="date_start" help="Start date of the report. Maximum range is 31 days."/>
+                    <field name="date_end" help="End date of the report."/>
+                    <field name="order_id" widget="many2many_tags"/>
+                    <field name="category_ids" widget="many2many_tags"/>
+                </group>
+                <footer>
+                    <button name="action_export_pdf" type="object" class="btn-primary" string="Export PDF"/>
+                    <button name="action_export_excel" type="object" string="Export Excel"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_bk_sales_profit_report_wizard" model="ir.actions.act_window">
+        <field name="name">Profitability Report</field>
+        <field name="res_model">sales.profit.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_bk_sales_profit_report"
+              name="Profitability Report"
+              parent="sale.menu_sale_report"
+              action="action_bk_sales_profit_report_wizard"/>
+</odoo>
