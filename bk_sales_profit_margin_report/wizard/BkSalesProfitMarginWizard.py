@@ -23,8 +23,8 @@ class BkSalesProfitReportWizard(models.TransientModel):
             if rec.date_start and rec.date_end:
                 if rec.date_start > rec.date_end:
                     raise ValidationError("Start date must be before end date.")
-                if (rec.date_end - rec.date_start).days > 31:
-                    raise ValidationError("The selected date range cannot exceed 31 days.")
+                if (rec.date_end - rec.date_start).days < 0:
+                    raise ValidationError("The selected date range is not valid.")
 
     def _get_report_data(self):
         if not self.date_start and not self.date_end and not self.order_id:
